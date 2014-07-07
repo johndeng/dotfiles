@@ -1,0 +1,5 @@
+" GUI settings
+set guioptions-=T
+set guioptions-=L
+set guioptions-=r
+set guifont=Monaco:h12
