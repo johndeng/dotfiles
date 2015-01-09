@@ -1,6 +1,3 @@
-"*****************************************************************************
-"" NeoBundle core
-"*****************************************************************************
 if has('vim_starting')
   set nocompatible               " Be iMproved
 
@@ -8,9 +5,9 @@ if has('vim_starting')
   set runtimepath+=~/.vim/bundle/neobundle.vim/
 endif
 
-let vundle_readme=expand('~/.vim/bundle/neobundle.vim/README.md')
+let neobundle_readme=expand('~/.vim/bundle/neobundle.vim/README.md')
 
-if !filereadable(vundle_readme)
+if !filereadable(neobundle_readme)
   echo "Installing NeoBundle..."
   echo ""
   silent !mkdir -p ~/.vim/bundle
@@ -36,6 +33,15 @@ NeoBundle 'airblade/vim-gitgutter'
 NeoBundle 'sheerun/vim-polyglot'
 NeoBundle 'vim-scripts/grep.vim'
 NeoBundle 'vim-scripts/CSApprox'
+NeoBundle 'Shougo/vimproc.vim', {
+      \ 'build' : {
+      \     'windows' : 'tools\\update-dll-mingw',
+      \     'cygwin' : 'make -f make_cygwin.mak',
+      \     'mac' : 'make -f make_mac.mak',
+      \     'unix' : 'make -f make_unix.mak',
+      \    },
+      \ }
+NeoBundle 'Shougo/vimshell.vim'
 
 "" Snippets
 NeoBundle 'SirVer/ultisnips'
@@ -43,23 +49,20 @@ NeoBundle 'honza/vim-snippets'
 
 "" Color
 NeoBundle 'tomasr/molokai'
-NeoBundle 'altercation/vim-colors-solarized'
 
 "" Custom bundles
 
-"" Go Lang Bundle
-NeoBundle "majutsushi/tagbar"
-NeoBundle "fatih/vim-go"
+NeoBundle 'vim-scripts/c.vim'
 
 
 "" Python Bundle
-NeoBundle "davidhalter/jedi-vim"
 NeoBundle "scrooloose/syntastic"
 NeoBundle "majutsushi/tagbar"
 NeoBundle "Yggdroot/indentLine"
 
 
-NeoBundle 'vim-scripts/c.vim'
+"" Javascript Bundle
+NeoBundle "scrooloose/syntastic"
 
 
 "" HTML Bundle
@@ -69,10 +72,43 @@ NeoBundle 'gorodinskiy/vim-coloresque'
 NeoBundle 'tpope/vim-haml'
 
 
-"" Javascript Bundle
 NeoBundle "scrooloose/syntastic"
+NeoBundle "majutsushi/tagbar"
 
 
+NeoBundle "eagletmt/neco-ghc"
+NeoBundle "Shougo/neocomplete.vim"
+NeoBundle "dag/vim2hs"
+NeoBundle "pbrisbin/vim-syntax-shakespeare"
+NeoBundle "Valloric/YouCompleteMe"
+
+
+NeoBundle 'elixir-lang/vim-elixir'
+NeoBundle 'carlosgaldino/elixir-snippets'
+
+
+"" Go Lang Bundle
+NeoBundle "majutsushi/tagbar"
+NeoBundle "fatih/vim-go"
+
+
+"" Ruby Bundle
+NeoBundle "tpope/vim-rails"
+NeoBundle "tpope/vim-rake"
+NeoBundle "tpope/vim-projectionist"
+NeoBundle "thoughtbot/vim-rspec"
+NeoBundle "majutsushi/tagbar"
+
+"" Angular Bundle
+NeoBundle "matthewsimo/angular-vim-snippets"
+NeoBundle "burnettk/vim-angular"
+
+
+
+"" Include user's extra bundle
+if filereadable(expand("~/.vimrc.local.bundles"))
+  source ~/.vimrc.local.bundles
+endif
 
 call neobundle#end()
 
@@ -91,16 +127,12 @@ set encoding=utf-8
 set fileencoding=utf-8
 set fileencodings=utf-8
 
-"" Unleash all VIM power
-set nocompatible
-
 "" Fix backspace indent
 set backspace=indent,eol,start
 
 "" allow plugins by file type
 filetype on
 filetype plugin on
-filetype indent on
 
 "" Tabs. May be overriten by autocmd rules
 set tabstop=4
@@ -148,6 +180,7 @@ colorscheme molokai
 set mousemodel=popup
 set t_Co=256
 set nocursorline
+set guioptions=egmrti
 set guioptions-=T
 set guioptions-=L
 set guioptions-=r
@@ -155,19 +188,15 @@ set gfn=Monospace\ 8
 
 if has("gui_running")
   if has("gui_mac") || has("gui_macvim")
-    set guifont=Monaco:h10
+    set guifont=Monaco:h12
     set transparency=7
   endif
+
+  set guifont=Source\ Code\ Pro\ 10
+
 else
   let g:CSApprox_loaded = 1
 
-  if $COLORTERM == 'gnome-terminal'
-    set term=gnome-256color
-  else
-    if $TERM == 'xterm'
-      set term=xterm-256color
-    endif
-  endif
 endif
 
 if &term =~ '256color'
@@ -204,48 +233,58 @@ let g:airline#extensions#tabline#left_alt_sep = '|'
 "" Abbreviations
 "*****************************************************************************
 "" no one is really happy until you have this shortcuts
-cab W! w!
-cab Q! q!
-cab Wq wq
-cab Wa wa
-cab wQ wq
-cab WQ wq
-cab W w
-cab Q q
+cnoreabbrev W! w!
+cnoreabbrev Q! q!
+cnoreabbrev Wq wq
+cnoreabbrev Wa wa
+cnoreabbrev wQ wq
+cnoreabbrev WQ wq
+cnoreabbrev W w
+cnoreabbrev Q q
 
 "" NERDTree configuration
+let g:NERDTreeChDirMode=2
+let g:NERDTreeMinimalUI=1
 let NERDTreeChDirMode=2
 let NERDTreeQuitOnOpen=0
-let NERDTreeMinimalUI=1
-let NERDTreeIgnore=['\.rbc$', '\~$', '\.pyc$', '\.db$', '\.sqlite$', '__pycache__']
-let NERDTreeSortOrder=['^__\.py$', '\/$', '*', '\.swp$', '\.bak$', '\~$']
-let NERDTreeShowBookmarks=1
+let g:NERDTreeIgnore=['\.rbc$', '\~$', '\.pyc$', '\.db$', '\.sqlite$', '__pycache__']
+let g:NERDTreeSortOrder=['^__\.py$', '\/$', '*', '\.swp$', '\.bak$', '\~$']
+let g:NERDTreeShowBookmarks=1
 let g:nerdtree_tabs_focus_on_files=1
 let g:NERDTreeMapOpenInTabSilent = '<RightMouse>'
 let g:NERDTreeWinSize = 20
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*.db,*.sqlite
 nnoremap <silent> <F2> :NERDTreeFind<CR>
-" noremap <F3> :NERDTreeToggle<CR>
+"noremap <F3> :NERDTreeToggle<CR>
 noremap <Leader>p :NERDTreeToggle<CR>
 
 " grep.vim
 nnoremap <silent> <leader>f :Rgrep<CR>
 let Grep_Default_Options = '-IR'
 
+" vimshell
+let g:vimshell_user_prompt = 'fnamemodify(getcwd(), ":~")'
+let g:vimshell_prompt =  '$ '
+nnoremap <silent> <leader>sh :VimShellCreate<CR>
+
 "*****************************************************************************
 "" Functions
 "*****************************************************************************
-function s:setupWrapping()
-  set wrap
-  set wm=2
-  set textwidth=79
-endfunction
+if !exists('*s:setupWrapping')
+  function s:setupWrapping()
+    set wrap
+    set wm=2
+    set textwidth=79
+  endfunction
+endif
 
-function TrimWhiteSpace()
-  let @*=line(".")
-  %s/\s*$//e
-  ''
-:endfunction
+if !exists('*TrimWhiteSpace')
+  function TrimWhiteSpace()
+    let @*=line(".")
+    %s/\s*$//e
+    ''
+  endfunction
+endif
 
 "*****************************************************************************
 "" Autocmd Rules
@@ -273,8 +312,8 @@ set autoread
 "" Mappings
 "*****************************************************************************
 "" Split
-noremap <Leader>h :split<CR>
-noremap <Leader>v :vsplit<CR>
+noremap <Leader>h :<C-u>split<CR>
+noremap <Leader>v :<C-u>vsplit<CR>
 
 "" Git
 noremap <Leader>ga :!git add .<CR>
@@ -286,8 +325,8 @@ noremap <Leader>gd :Gvdiff<CR>
 noremap <Leader>gr :Gremove<CR>
 
 "" Tabs
-nmap <Tab> gt
-nmap <S-Tab> gT
+nnoremap <Tab> gt
+nnoremap <S-Tab> gT
 nnoremap <silent> <S-t> :tabnew<CR>
 
 "" Set working directory
@@ -301,7 +340,7 @@ noremap <Leader>te :tabe <C-R>=expand("%:p:h") . "/" <CR>
 
 "" ctrlp.vim
 set wildmode=list:longest,list:full
-set wildignore+=*.o,*.obj,.git,*.rbc,.pyc,__pycache__
+set wildignore+=*.o,*.obj,.git,*.rbc,*.pyc,__pycache__
 let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn|tox)$'
 let g:ctrlp_user_command = "find %s -type f | grep -Ev '"+ g:ctrlp_custom_ignore +"'"
 let g:ctrlp_use_caching = 0
@@ -329,25 +368,27 @@ let g:syntastic_aggregate_errors = 1
 let g:airline_enable_syntastic = 1
 
 "" Remove trailing whitespace on <leader>S
-nnoremap <leader>:call TrimWhiteSpace()<cr>:let @/=''<CR>
+nnoremap <silent> <leader>S :call TrimWhiteSpace()<cr>:let @/=''<CR>
 
 "" Copy/Paste/Cut
 noremap YY "+y<CR>
 noremap P "+gP<CR>
 noremap XX "+x<CR>
 
-" pbcopy for OSX copy/paste
-vmap <C-x> :!pbcopy<CR>
-vmap <C-c> :w !pbcopy<CR><CR>
+if has('macunix')
+  " pbcopy for OSX copy/paste
+  vmap <C-x> :!pbcopy<CR>
+  vmap <C-c> :w !pbcopy<CR><CR>
+endif
 
 "" Buffer nav
-noremap ,z :bp<CR>
-noremap ,q :bp<CR>
-noremap ,x :bn<CR>
-noremap ,w :bn<CR>
+noremap <leader>z :bp<CR>
+noremap <leader>q :bp<CR>
+noremap <leader>x :bn<CR>
+noremap <leader>w :bn<CR>
 
 "" Close buffer
-noremap ,c :bd<CR>
+noremap <leader>c :bd<CR>
 
 "" Clean search (highlight)
 nnoremap <silent> <leader><space> :noh<cr>
@@ -360,33 +401,15 @@ vmap > >gv
 noremap ,o :!echo `git url`/blob/`git rev-parse --abbrev-ref HEAD`/%\#L<C-R>=line('.')<CR> \| xargs open<CR><CR>
 "" Custom configs
 
-let g:tagbar_type_go = {
-    \ 'ctagstype' : 'go',
-    \ 'kinds'     : [  'p:package', 'i:imports:1', 'c:constants', 'v:variables',
-        \ 't:types',  'n:interfaces', 'w:fields', 'e:embedded', 'm:methods',
-        \ 'r:constructor', 'f:functions' ],
-    \ 'sro' : '.',
-    \ 'kind2scope' : { 't' : 'ctype', 'n' : 'ntype' },
-    \ 'scope2kind' : { 'ctype' : 't', 'ntype' : 'n' },
-    \ 'ctagsbin'  : 'gotags',
-    \ 'ctagsargs' : '-sort -silent'
-    \ }
+" Tagbar
+nmap <silent> <F4> :TagbarToggle<CR>
+let g:tagbar_autofocus = 1
 
 
 " vim-python
 autocmd FileType python setlocal expandtab shiftwidth=4 tabstop=8 colorcolumn=79
     \ formatoptions+=croq softtabstop=4 smartindent
     \ cinwords=if,elif,else,for,while,try,except,finally,def,class,with
-
-" jedi-vim
-let g:jedi#popup_on_dot = 0
-let g:jedi#goto_assignments_command = "<leader>g"
-let g:jedi#goto_definitions_command = "<leader>d"
-let g:jedi#documentation_command = "K"
-let g:jedi#usages_command = "<leader>n"
-let g:jedi#rename_command = "<leader>r"
-let g:jedi#show_call_signatures = "0"
-let g:jedi#completions_command = "<C-Space>"
 
 " syntastic
 let g:syntastic_python_checkers=['python', 'flake8']
@@ -401,6 +424,42 @@ let g:tagbar_autofocus = 1
 
 let g:javascript_enable_domhtmlcss = 1
 
+let g:haskell_conceal_wide = 1
+let g:haskell_multiline_strings = 1
+let g:necoghc_enable_detailed_browse = 1
+setlocal omnifunc=necoghc#omnifunc
+
+
+let g:tagbar_type_go = {
+    \ 'ctagstype' : 'go',
+    \ 'kinds'     : [  'p:package', 'i:imports:1', 'c:constants', 'v:variables',
+        \ 't:types',  'n:interfaces', 'w:fields', 'e:embedded', 'm:methods',
+        \ 'r:constructor', 'f:functions' ],
+    \ 'sro' : '.',
+    \ 'kind2scope' : { 't' : 'ctype', 'n' : 'ntype' },
+    \ 'scope2kind' : { 'ctype' : 't', 'ntype' : 'n' },
+    \ 'ctagsbin'  : 'gotags',
+    \ 'ctagsargs' : '-sort -silent'
+    \ }
+
+
+let g:rubycomplete_buffer_loading = 1
+let g:rubycomplete_classes_in_global = 1
+let g:rubycomplete_rails = 1
+
+au BufNewFile,BufRead *.rb,*.rbw,*.gemspec set filetype=ruby
+autocmd Filetype ruby setlocal ts=2 sts=2 sw=2
+
+let g:tagbar_type_ruby = {
+    \ 'kinds' : [
+        \ 'm:modules',
+        \ 'c:classes',
+        \ 'd:describes',
+        \ 'C:contexts',
+        \ 'f:methods',
+        \ 'F:singleton methods'
+    \ ]
+\ }
 
 
 "" Include user's local vim config
@@ -409,3 +468,9 @@ if filereadable(expand("~/.vimrc.local"))
 endif
 
 noremap <Leader>lc :lclose<CR>
+
+"" Vim-go Config
+let g:go_fmt_command = "goimports"
+let g:go_hightlight_functions = 1
+let g:go_hightlight_structs = 1
+let g:go_hightlight_methods = 1
